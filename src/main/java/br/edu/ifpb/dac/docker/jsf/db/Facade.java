@@ -16,5 +16,7 @@ public interface Facade {
     public void nova(Pessoa p);
     public void atualizar(Pessoa p);
     public List<Pessoa> todas();
+    public void excluir(Pessoa p);
+    public Pessoa pesquisarPorCPF(String cpf);
     
 }

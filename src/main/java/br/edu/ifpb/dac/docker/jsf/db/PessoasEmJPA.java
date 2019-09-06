@@ -49,4 +49,14 @@ public class PessoasEmJPA implements Facade {
             .getResultList();
     }
     
+    @Override
+    public Pessoa pesquisarPorCPF(String cpf) {
+        return em.find(Pessoa.class, cpf);
+    }
+
+    @Override
+    public void excluir(Pessoa p) {
+        em.remove(p);
+    }
+    
 }

@@ -4,7 +4,8 @@ import br.edu.ifpb.dac.docker.jsf.domain.Dependente;
 import br.edu.ifpb.dac.docker.jsf.domain.Pessoa;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,7 +16,8 @@ import java.util.logging.Logger;
  */
 public class PessoasEmJDBC implements Facade {
     
-    private Statement stat = (Statement) new Connection();
+    private Connection con = (Connection) new ConnectionDB();
+    private PreparedStatement stat;
     private String sql = "";
 
     @Override
@@ -25,7 +27,7 @@ public class PessoasEmJDBC implements Facade {
                 d.getNome() + "," +
                 d.getDataDeNascimento() + ");";
         try {
-            stat.execute(sql);
+            con.createStatement().execute(sql);
         } catch (SQLException ex) {
             Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -38,7 +40,7 @@ public class PessoasEmJDBC implements Facade {
                 p.getNome() + "," +
                 p.getDependente().getUuid() + ");";
         try {
-            stat.execute(sql);
+            con.createStatement().execute(sql);
         } catch (SQLException ex) {
             Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -51,7 +53,7 @@ public class PessoasEmJDBC implements Facade {
                 d.getNome() + "," +
                 d.getDataDeNascimento() + ");"; */
         try {
-            stat.executeUpdate(sql);
+            con.createStatement().executeUpdate(sql);
         } catch (SQLException ex) {
             Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -64,7 +66,7 @@ public class PessoasEmJDBC implements Facade {
                 p.getNome() + "," +
                 p.getDependente().getUuid() + ");"; */
         try {
-            stat.executeUpdate(sql);
+            con.createStatement().executeUpdate(sql);
         } catch (SQLException ex) {
             Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -76,7 +78,7 @@ public class PessoasEmJDBC implements Facade {
         ResultSet rs;
         ArrayList lista = new ArrayList<>();
         try {
-            rs = stat.executeQuery(sql);
+            rs = con.createStatement().executeQuery(sql);
             for(int i=0; rs.getFetchSize() >= i; i++){
                 lista.add(rs.getObject(i));
             }
@@ -92,7 +94,7 @@ public class PessoasEmJDBC implements Facade {
         ResultSet rs;
         ArrayList lista = new ArrayList<>();
         try {
-            rs = stat.executeQuery(sql);
+            rs = con.createStatement().executeQuery(sql);
             for(int i=0; rs.getFetchSize() >= i; i++){
                 lista.add(rs.getObject(i));
             }
@@ -100,6 +102,29 @@ public class PessoasEmJDBC implements Facade {
             Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
         }
         return lista;
+    }
+    
+    @Override
+    public Pessoa pesquisarPorCPF(String cpf) {
+        sql = "SELECT p FROM Pessoa WHERE cpf = " + cpf;
+        Pessoa p = null;
+        try {
+            ResultSet rs = con.createStatement().executeQuery(sql);
+            p = (Pessoa) rs.getObject(1);
+        } catch (SQLException ex) {
+            Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return p;
+    }
+
+    @Override
+    public void excluir(Pessoa p) {
+        sql = "DELETE FROM Pessoa p WHERE p.id =" + p.getId();
+        try {
+            con.createStatement().execute(sql);
+        } catch (SQLException ex) {
+            Logger.getLogger(PessoasEmJDBC.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
 }
