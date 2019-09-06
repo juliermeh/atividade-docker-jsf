@@ -28,6 +28,11 @@ public class Pessoa implements Serializable {
 
     public Pessoa() { }
 
+    public Pessoa(String cpf, String nome) {
+        this.cpf = cpf;
+        this.nome = nome;
+    }
+    
     public Pessoa(String nome, String cpf, Dependente dependente) {
         this.nome = nome;
         this.cpf = cpf;
